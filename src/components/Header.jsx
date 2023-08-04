@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { Container } from "../styles/Container.styled";
 import PropTypes from "prop-types";
+import { MoonIcon } from "./icons/Moon";
+import { SunIcon } from "./icons/Sun";
 
 export const Header = ({ toggleTheme, theme }) => {
   return (
@@ -8,8 +10,7 @@ export const Header = ({ toggleTheme, theme }) => {
       <StyledHeader>
         <h1>GitUser</h1>
         <Toggle onClick={toggleTheme}>
-          {theme === "light" ? "Dark" : "Light"}
-          {theme === "light" ? <p>Moon</p> : <p>Sun</p>}
+          {theme === "light" ? <MoonIcon /> : <SunIcon />}
         </Toggle>
       </StyledHeader>
     </Container>
@@ -33,13 +34,13 @@ const StyledHeader = styled.header`
 
 export const Toggle = styled.button`
   background: none;
-  min-width: 10ch;
   display: flex;
   color: ${({ theme }) => theme.toggleButton.color};
   text-transform: uppercase;
   letter-spacing: 3px;
   gap: 1rem;
   font-weight: bold;
+  margin-right: 10px;
 
   &:hover {
     color: ${({ theme }) => theme.toggleButton.hoverColor};
