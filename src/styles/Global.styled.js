@@ -1,5 +1,5 @@
 import * as styled from "styled-components";
-import { device } from "./utils/device";
+import { device } from "./utils/theme";
 
 export const GlobalStyles = styled.createGlobalStyle`
   html {

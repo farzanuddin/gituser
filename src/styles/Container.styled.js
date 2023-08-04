@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { device } from "./utils/device";
+
+import { device } from "./utils/theme";
 
 export const Container = styled.div`
   width: 90%;

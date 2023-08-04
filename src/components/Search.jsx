@@ -5,8 +5,7 @@ import styled from "styled-components";
 import { Container } from "../styles/Container.styled";
 import { Display } from "./Display";
 
-import { device } from "../styles/utils/device";
-
+import { device } from "../styles/utils/theme";
 import searchIcon from "../assets/icon-search.svg";
 
 const getGithubUserInformation = async (userName) => {

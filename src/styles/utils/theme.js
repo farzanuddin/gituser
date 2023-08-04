@@ -1,3 +1,8 @@
+export const device = {
+  tablet: "(min-width: 768px)",
+  laptop: "(min-width: 1024px)",
+};
+
 export const lightTheme = {
   background: "#F6F8FF",
   color: "#4b6a9b",

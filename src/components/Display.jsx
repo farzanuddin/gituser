@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { convertDate } from "../utils";
 
-import { device } from "../styles/utils/device";
+import { device } from "../styles/utils/theme";
 
 import { LocationIcon } from "./icons/Location";
 import { LinkIcon } from "./icons/Link";
