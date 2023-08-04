@@ -6,6 +6,7 @@ import { Container } from "../styles/Container.styled";
 import { Display } from "./Display";
 
 import { device } from "../styles/utils/theme";
+import { SpinningLoader } from "./icons/SpinningIcon";
 import searchIcon from "../assets/icon-search.svg";
 
 const getGithubUserInformation = async (userName) => {
@@ -24,6 +25,7 @@ export const Search = () => {
   const [error, setError] = useState("");
   const [data, setData] = useState("");
   const [shake, setShake] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const triggerShake = () => {
     setShake(true);
@@ -33,12 +35,15 @@ export const Search = () => {
   };
 
   const searchUser = async (username) => {
+    setLoading(true);
     try {
       const results = await getGithubUserInformation(username);
       setData(Object.assign({}, results));
     } catch (e) {
       setError("No results");
       triggerShake();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,10 +87,10 @@ export const Search = () => {
           </SearchInput>
           <SearchOptions>
             <p>{error}</p>
-            <SubmitButton shake={shake}>Search</SubmitButton>
+            <SubmitButton shake={shake}>{loading ? <SpinningLoader /> : "Search"}</SubmitButton>
           </SearchOptions>
         </SearchBar>
-        <Display data={data}></Display>
+        {data && <Display data={data}></Display>}
       </Container>
     </main>
   );
