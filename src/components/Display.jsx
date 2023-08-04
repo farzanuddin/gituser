@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-
-import { convertDate } from "../utils";
+import dayjs from "dayjs";
 
 import { device } from "../styles/utils/theme";
 
@@ -75,7 +74,7 @@ export const Display = ({ data }) => {
         <a target="__blank" href={data.html_url}>
           @{data.login}
         </a>
-        <p>Joined {convertDate(data.created_at)}</p>
+        <p>Joined {dayjs(data.created_at).format("MMMM YYYY")}</p>
       </UserName>
       {data.bio ? <UserBio>{data.bio}</UserBio> : <UserBio>This Profile has no bio.</UserBio>}
       <UserGithubStats
