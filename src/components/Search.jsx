@@ -10,6 +10,7 @@ import searchIcon from "../assets/icon-search.svg";
 
 const getGithubUserInformation = async (userName) => {
   const octo = new Octokit();
+
   let response;
   response = await octo.request("GET /users/{username}", {
     username: userName,
@@ -22,13 +23,22 @@ export const Search = () => {
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
   const [data, setData] = useState("");
+  const [shake, setShake] = useState(false);
+
+  const triggerShake = () => {
+    setShake(true);
+    setTimeout(() => {
+      setShake(false);
+    }, 500);
+  };
 
   const searchUser = async (username) => {
     try {
       const results = await getGithubUserInformation(username);
       setData(Object.assign({}, results));
-    } catch (error) {
+    } catch (e) {
       setError("No results");
+      triggerShake();
     }
   };
 
@@ -36,7 +46,7 @@ export const Search = () => {
     e.preventDefault();
 
     if (!search) {
-      setError("Invalid Search");
+      triggerShake();
       return;
     }
 
@@ -65,15 +75,15 @@ export const Search = () => {
             <input
               id="userSearch"
               type="text"
-              placeholder="Search github username..."
+              placeholder="Search github repo..."
               onChange={handleChange}
               onBlur={handleBlur}
             />
           </SearchInput>
-          <SendSearch>
+          <SearchOptions>
             <p>{error}</p>
-            <SubmitButton>Search</SubmitButton>
-          </SendSearch>
+            <SubmitButton shake={shake}>Search</SubmitButton>
+          </SearchOptions>
         </SearchBar>
         <Display data={data}></Display>
       </Container>
@@ -115,7 +125,7 @@ const SearchInput = styled.label`
   }
 `;
 
-const SendSearch = styled.div`
+const SearchOptions = styled.div`
   align-items: center;
   display: flex;
   gap: 1.5rem;
@@ -139,6 +149,26 @@ const SubmitButton = styled.button`
   color: ${({ theme }) => theme.primaryButton.color};
   outline: none;
   padding: 1.3em 1.5em;
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+    75% {
+      transform: translateX(-5px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  animation: ${({ shake }) => (shake ? "shake 0.5s" : "none")};
 
   &:hover {
     opacity: 0.6;

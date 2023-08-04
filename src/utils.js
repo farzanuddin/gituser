@@ -1,16 +1,3 @@
-import { Octokit } from "octokit";
-
-export const getGithubUserInfo = async (userName) => {
-  const octokit = new Octokit();
-  
-  let response;
-  response = await octokit.request("GET /users/{username}", {
-    username: userName,
-  });
-
-  return response.data;
-};
-
 export const convertDate = (dateString) => {
   const dateObject = new Date(dateString);
   const monthData = [
