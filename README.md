@@ -1,10 +1,19 @@
-# React + Vite
+# GitUser
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project was mainly created to explore Vite as a replacement for Create-React-App and to set up GitHub Pages for serving apps for my portfolio.
 
-Currently, two official plugins are available:
+## Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md)
-  uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses
-  [SWC](https://swc.rs/) for Fast Refresh
+- Vite: A fast development environment for modern web projects.
+- Styled Components: CSS-in-JS library for styling React components.
+- PropTypes: Runtime type checking for React props.
+- Dayjs: A minimalist JavaScript library for handling dates and times.
+- ESLint: Pluggable linting utility for JavaScript and JSX code.
+  
+## Project Overview
+
+GitUser is a project that allows users to explore GitHub user profiles and their repositories. It leverages Vite for fast development and optimized builds. Styled Components are used for styling, providing scoped and reusable styles for components. PropTypes ensure type checking and documentation for component props. Dayjs simplifies date and time manipulation. The codebase is maintained using ESLint for consistent and clean code.
+
+## Credits
+
+This project was inspired by my passion for web development and the desire to learn and explore new technologies.
