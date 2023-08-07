@@ -87,6 +87,10 @@ const theme = {
       light: "#4b6a9b",
       dark: "#fff",
     },
+    link: {
+      light: "#0079FF",
+      dark: "#0079FF",
+    },
   },
 };
 
@@ -123,6 +127,7 @@ const generateTheme = (themeMode) => {
     },
     userSocial: {
       color: isLight ? theme.userSocial.color.light : theme.userSocial.color.dark,
+      link: isLight ? theme.userSocial.link.light : theme.userSocial.link.dark,
     },
   };
 };

@@ -8,31 +8,27 @@ import { LocationIcon } from "./icons/Location";
 import { LinkIcon } from "./icons/Link";
 import { CompanyIcon } from "./icons/Company";
 
-const Icon = ({ icon }) => {
-  return <styledIcon>{icon}</styledIcon>;
+const StatBlock = ({ name, stat }) => {
+  return (
+    <div>
+      <h3>{name}</h3>
+      <p>{stat}</p>
+    </div>
+  );
 };
 
 const UserGithubStats = ({ repos, followers, following }) => {
   return (
-    <UserGitHubStatsStyled>
-      <div>
-        <h3>Repos</h3>
-        <p>{repos}</p>
-      </div>
-      <div>
-        <h3>Followers</h3>
-        <p>{followers}</p>
-      </div>
-      <div>
-        <h3>Following</h3>
-        <p>{following}</p>
-      </div>
-    </UserGitHubStatsStyled>
+    <UserStats>
+      <StatBlock name="Repos" stat={repos} />
+      <StatBlock name="Followers" stat={followers} />
+      <StatBlock name="Following" stat={following} />
+    </UserStats>
   );
 };
 
 const Info = ({ text, type, icon }) => {
-  const writeSomething = () => {
+  const getText = () => {
     if (!text) return "Not Availible";
     else if (type === "link")
       return (
@@ -42,28 +38,32 @@ const Info = ({ text, type, icon }) => {
       );
     else return text;
   };
+
   const availible = text ? true : false;
+
   return (
-    <InfoStyled fade={availible ? 1 : 0.5}>
+    <Information fade={availible ? 1 : 0.5}>
       <span>{icon}</span>
-      {writeSomething()}
-    </InfoStyled>
+      {getText()}
+    </Information>
   );
 };
 
 const UserInformation = ({ location, blog, company }) => {
   return (
-    <UserInformationStyled>
-      <Info text={location} type="text" icon={<LocationIcon />} />
-      <Info text={company} type="text" icon={<CompanyIcon />} />
+    <UserInfo>
+      <div>
+        <Info text={location} type="text" icon={<LocationIcon />} />
+        <Info text={company} type="text" icon={<CompanyIcon />} />
+      </div>
       <Info text={blog} type="link" icon={<LinkIcon />} />
-    </UserInformationStyled>
+    </UserInfo>
   );
 };
 
 export const Display = ({ data }) => {
   return (
-    <DisplayResultsStyled>
+    <DisplayResults>
       <UserImage>
         <img src={data.avatar_url} alt="User Profile" />
       </UserImage>
@@ -82,16 +82,16 @@ export const Display = ({ data }) => {
       ></UserGithubStats>
       <UserInformation
         location={data.location}
-        twitter={data.twitter_username}
         blog={data.blog}
         company={data.company}
       ></UserInformation>
-    </DisplayResultsStyled>
+    </DisplayResults>
   );
 };
 
-Icon.propTypes = {
-  icon: PropTypes.node,
+StatBlock.propTypes = {
+  name: PropTypes.string,
+  stat: PropTypes.number,
 };
 
 UserGithubStats.propTypes = {
@@ -108,7 +108,6 @@ Info.propTypes = {
 
 UserInformation.propTypes = {
   location: PropTypes.string,
-  twitter: PropTypes.string,
   blog: PropTypes.string,
   company: PropTypes.string,
 };
@@ -131,7 +130,7 @@ Display.propTypes = {
   }),
 };
 
-const DisplayResultsStyled = styled.section`
+const DisplayResults = styled.section`
   background-color: ${({ theme }) => theme.resultsBackground};
   margin-top: 3rem;
   padding: 2.2em 1.7em;
@@ -216,7 +215,7 @@ const UserBio = styled.p`
   color: ${({ theme }) => theme.userBio};
 `;
 
-const UserGitHubStatsStyled = styled.div`
+const UserStats = styled.div`
   grid-area: UserGitHubStats;
   background-color: ${({ theme }) => theme.userStats.background};
   text-align: center;
@@ -249,15 +248,18 @@ const UserGitHubStatsStyled = styled.div`
   }
 `;
 
-const UserInformationStyled = styled.div`
+const UserInfo = styled.div`
   grid-area: UserInformation;
   margin-top: 1.5rem;
 
-  @media ${device.tablet} {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+  div {
+    display: flex;
+
+    & > *:first-child {
+      margin-right: 30%;
+    }
   }
+
   p {
     display: flex;
     gap: 1.2rem;
@@ -275,11 +277,16 @@ const UserInformationStyled = styled.div`
     }
   }
 
+  a {
+    color: ${({ theme }) => theme.userSocial.link};
+    grid-column: span 3;
+  }
+
   a:visited {
-    color: ${({ theme }) => theme.userSocial.color};
+    color: ${({ theme }) => theme.userSocial.link};
   }
 `;
 
-const InfoStyled = styled.p`
+const Information = styled.p`
   opacity: ${({ fade }) => fade};
 `;
