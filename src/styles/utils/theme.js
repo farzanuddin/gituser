@@ -3,69 +3,129 @@ export const device = {
   laptop: "(min-width: 1024px)",
 };
 
-export const lightTheme = {
-  background: "#F6F8FF",
-  color: "#4b6a9b",
-  pageTitle: "#222731",
+const theme = {
+  background: {
+    light: "#F6F8FF",
+    dark: "#141d2f",
+  },
+  color: {
+    light: "#4b6a9b",
+    dark: "#fff",
+  },
   primaryButton: {
-    background: "#0079ff",
-    color: "#fff",
-    hoverBackground: "#60abff",
+    background: {
+      light: "#0079ff",
+      dark: "#0079ff",
+    },
+    color: {
+      light: "#fff",
+      dark: "#fff",
+    },
+    hoverBackground: {
+      light: "#60abff",
+      dark: "#90a4d4",
+    },
   },
   toggleButton: {
-    color: "#697c9a",
-    hoverColor: "#222731",
+    color: {
+      light: "#697c9a",
+      dark: "#fff",
+    },
+    hoverColor: {
+      light: "#222731",
+      dark: "#90a4df",
+    },
   },
-  searchBar: "#fefefe",
-  searchText: "#4B6A9B",
-  errorText: "#f74646",
-
-  resultsBackground: "#fff",
-  searchName: "#0079FF",
-  dateJoined: "#697c9a",
-  userName: "#2b3442",
-  userBio: "#4b6a9b",
+  searchBar: {
+    light: "#fefefe",
+    dark: "#1e2a47",
+  },
+  searchText: {
+    light: "#4B6A9B",
+    dark: "#fff",
+  },
+  errorText: {
+    light: "#f74646",
+    dark: "#f74646",
+  },
+  resultsBackground: {
+    light: "#fff",
+    dark: "#1E2A47",
+  },
+  searchName: {
+    light: "#0079FF",
+    dark: "#0079FF",
+  },
+  dateJoined: {
+    light: "#697c9a",
+    dark: "#fff",
+  },
+  userName: {
+    light: "#2b3442",
+    dark: "#fff",
+  },
+  userBio: {
+    light: "#4b6a9b",
+    dark: "#fff",
+  },
   userStats: {
-    background: "#f6f8ff",
-    statTitle: "#4b6a9b",
-    statNum: "#2b3442",
+    background: {
+      light: "#f6f8ff",
+      dark: "#141d2f",
+    },
+    statTitle: {
+      light: "#4b6a9b",
+      dark: "#fff",
+    },
+    statNum: {
+      light: "#2b3442",
+      dark: "#fff",
+    },
   },
-
   userSocial: {
-    color: "#4b6a9b",
+    color: {
+      light: "#4b6a9b",
+      dark: "#fff",
+    },
   },
 };
 
-export const darkTheme = {
-  background: "#141d2f",
-  color: "#fff",
-  pageTitle: "#fff",
-  primaryButton: {
-    background: "#0079ff",
-    color: "#fff",
-    hoverBackground: "#90a4d4   ",
-  },
-  toggleButton: {
-    color: "#fff",
-    hoverColor: "#90a4df",
-  },
-  searchBar: "#1e2a47",
-  searchText: "#fff",
-  errorText: "#f74646",
+const generateTheme = (themeMode) => {
+  const isLight = themeMode === "light";
 
-  resultsBackground: "#1E2A47",
-  searchName: "#0079FF",
-  dateJoined: "#fff",
-  userName: "#fff",
-  userBio: "#fff",
-
-  userStats: {
-    background: "#141d2f",
-    statTitle: "#fff",
-    statNum: "#fff",
-  },
-
-  userSocial: {
-    color: "#fff",
-  },
+  return {
+    background: theme.background[themeMode],
+    color: theme.color[themeMode],
+    pageTitle: theme.color[themeMode],
+    primaryButton: {
+      background: theme.primaryButton.background[themeMode],
+      color: theme.primaryButton.color[themeMode],
+      hoverBackground: theme.primaryButton.hoverBackground[themeMode],
+    },
+    toggleButton: {
+      color: isLight ? theme.toggleButton.color.light : theme.toggleButton.color.dark,
+      hoverColor: isLight
+        ? theme.toggleButton.hoverColor.light
+        : theme.toggleButton.hoverColor.dark,
+    },
+    searchBar: theme.searchBar[themeMode],
+    searchText: theme.searchText[themeMode],
+    errorText: theme.errorText[themeMode],
+    resultsBackground: theme.resultsBackground[themeMode],
+    searchName: theme.searchName[themeMode],
+    dateJoined: theme.dateJoined[themeMode],
+    userName: theme.userName[themeMode],
+    userBio: theme.userBio[themeMode],
+    userStats: {
+      background: theme.userStats.background[themeMode],
+      statTitle: theme.userStats.statTitle[themeMode],
+      statNum: theme.userStats.statNum[themeMode],
+    },
+    userSocial: {
+      color: isLight ? theme.userSocial.color.light : theme.userSocial.color.dark,
+    },
+  };
 };
+
+export const lightTheme = generateTheme("light");
+export const darkTheme = generateTheme("dark");

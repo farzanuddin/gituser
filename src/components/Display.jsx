@@ -6,7 +6,6 @@ import { device } from "../styles/utils/theme";
 
 import { LocationIcon } from "./icons/Location";
 import { LinkIcon } from "./icons/Link";
-import { TwitterIcon } from "./icons/Twitter";
 import { CompanyIcon } from "./icons/Company";
 
 const Icon = ({ icon }) => {
@@ -52,13 +51,12 @@ const Info = ({ text, type, icon }) => {
   );
 };
 
-const UserInformation = ({ location, twitter, blog, company }) => {
+const UserInformation = ({ location, blog, company }) => {
   return (
     <UserInformationStyled>
       <Info text={location} type="text" icon={<LocationIcon />} />
-      <Info text={blog} type="link" icon={<LinkIcon />} />
-      <Info text={twitter} type="text" icon={<TwitterIcon />} />
       <Info text={company} type="text" icon={<CompanyIcon />} />
+      <Info text={blog} type="link" icon={<LinkIcon />} />
     </UserInformationStyled>
   );
 };

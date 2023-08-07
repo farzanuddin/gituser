@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { Container } from "../styles/Container.styled";
 import PropTypes from "prop-types";
+
+import { Container } from "../styles/Container.styled";
+
 import { MoonIcon } from "./icons/Moon";
 import { SunIcon } from "./icons/Sun";
 

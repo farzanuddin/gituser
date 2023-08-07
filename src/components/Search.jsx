@@ -40,7 +40,6 @@ export const Search = () => {
       const results = await getGithubUserInformation(username);
       setData(Object.assign({}, results));
     } catch (e) {
-      setError("No results");
       triggerShake();
     } finally {
       setLoading(false);
@@ -87,7 +86,8 @@ export const Search = () => {
           </SearchInput>
           <SearchOptions>
             <p>{error}</p>
-            <SubmitButton shake={shake}>{loading ? <SpinningLoader /> : "Search"}</SubmitButton>
+            {loading && <SpinningLoader />}
+            <SubmitButton shake={shake}>Search</SubmitButton>
           </SearchOptions>
         </SearchBar>
         {data && <Display data={data}></Display>}
