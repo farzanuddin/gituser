@@ -1,6 +1,6 @@
 # GitUser
 
-This project was mainly created to explore Vite as a replacement for Create-React-App and to set up GitHub Pages for serving apps for my portfolio.
+This project was mainly created to explore Vite as a replacement for Create-React-App and to set up GitHub Pages for serving apps for my portfolio. It can be accessed via github pages through https://farzanuddin.github.io/gituser/
 
 ## Technologies Used
 
