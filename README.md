@@ -1,15 +1,15 @@
-# GitUser
+# GitUser Project
 
-This project was mainly created to explore Vite as a replacement for Create-React-App and to set up GitHub Pages for serving apps for my portfolio. It can be accessed via github pages through https://farzanuddin.github.io/gituser/
+The GitUser project was primarily developed to explore the capabilities of Vite as an alternative to Create-React-App. Additionally, it aimed to establish GitHub Pages for hosting applications within my portfolio. The project is accessible through GitHub Pages via [this link](https://farzanuddin.github.io/gituser/).
 
-## Technologies Used
+## Technologies Utilized
 
-- Vite: A fast development environment for modern web projects.
-- Styled Components: CSS-in-JS library for styling React components.
-- PropTypes: Runtime type checking for React props.
-- Dayjs: A minimalist JavaScript library for handling dates and times.
-- ESLint: Pluggable linting utility for JavaScript and JSX code.
-  
+- **Vite**: A high-speed development environment tailored for contemporary web projects.
+- **Styled Components**: A CSS-in-JS library employed for styling React components.
+- **PropTypes**: Facilitates runtime type checking to ensure the integrity of React props.
+- **Dayjs**: A minimalist JavaScript library designed for efficient handling of dates and times.
+- **ESLint**: A versatile linting utility ensuring the consistency and cleanliness of JavaScript and JSX code.
+
 ## Project Overview
 
-GitUser is a project that allows users to explore GitHub user profiles and their repositories. It leverages Vite for fast development and optimized builds. Styled Components are used for styling, providing scoped and reusable styles for components. PropTypes ensure type checking and documentation for component props. Dayjs simplifies date and time manipulation. The codebase is maintained using ESLint for consistent and clean code.
+GitUser is a comprehensive project that empowers users to explore GitHub profiles and repositories seamlessly. It harnesses the speed and optimization features of Vite for swift development and build processes. Styled Components offer a powerful solution for styling, providing scoped and reusable styles for components. PropTypes play a crucial role in enforcing type checking and documenting component props. Dayjs simplifies the complexities of date and time manipulation within the project. The entire codebase is meticulously maintained using ESLint, ensuring a standard and clean code structure.
