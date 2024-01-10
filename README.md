@@ -13,7 +13,3 @@ This project was mainly created to explore Vite as a replacement for Create-Reac
 ## Project Overview
 
 GitUser is a project that allows users to explore GitHub user profiles and their repositories. It leverages Vite for fast development and optimized builds. Styled Components are used for styling, providing scoped and reusable styles for components. PropTypes ensure type checking and documentation for component props. Dayjs simplifies date and time manipulation. The codebase is maintained using ESLint for consistent and clean code.
-
-## Credits
-
-This project was inspired by my passion for web development and the desire to learn and explore new technologies.
