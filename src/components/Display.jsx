@@ -2,8 +2,10 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { device } from "../styles/utils/theme";
-
 import { CompanyIcon, LinkIcon, LocationIcon } from "../icons";
+import { githubUserShape, nullableStringProp } from "../utils/githubUser";
+
+const EMPTY_BIO_TEXT = "This Profile has no bio.";
 
 const StatBlock = ({ name, stat }) => {
   return (
@@ -25,23 +27,21 @@ const UserGithubStats = ({ repos, followers, following }) => {
 };
 
 const Info = ({ text, type, icon }) => {
-  const getText = () => {
-    if (!text) return "Not Available";
-    else if (type === "link")
-      return (
-        <a target="_blank" rel="noopener noreferrer" href={text}>
-          {text}
-        </a>
-      );
-    else return text;
-  };
-
   const available = Boolean(text);
+  const content = !text ? (
+    "Not Available"
+  ) : type === "link" ? (
+    <a target="_blank" rel="noopener noreferrer" href={text}>
+      {text}
+    </a>
+  ) : (
+    text
+  );
 
   return (
-    <Information fade={available ? 1 : 0.5}>
+    <Information $fade={available ? 1 : 0.5}>
       <span>{icon}</span>
-      {getText()}
+      {content}
     </Information>
   );
 };
@@ -59,6 +59,8 @@ const UserInformation = ({ location, blog, company }) => {
 };
 
 export const Display = ({ data }) => {
+  const bioText = data.bio || EMPTY_BIO_TEXT;
+
   return (
     <DisplayResults>
       <UserImage>
@@ -71,83 +73,66 @@ export const Display = ({ data }) => {
         </a>
         <p>Joined {dayjs(data.created_at).format("MMMM YYYY")}</p>
       </UserName>
-      {data.bio ? <UserBio>{data.bio}</UserBio> : <UserBio>This Profile has no bio.</UserBio>}
+      <UserBio>{bioText}</UserBio>
       <UserGithubStats
         repos={data.public_repos}
         followers={data.followers}
         following={data.following}
-      ></UserGithubStats>
-      <UserInformation
-        location={data.location}
-        blog={data.blog}
-        company={data.company}
-      ></UserInformation>
+      />
+      <UserInformation location={data.location} blog={data.blog} company={data.company} />
     </DisplayResults>
   );
 };
 
 StatBlock.propTypes = {
-  name: PropTypes.string,
-  stat: PropTypes.number,
+  name: PropTypes.string.isRequired,
+  stat: PropTypes.number.isRequired,
 };
 
 UserGithubStats.propTypes = {
-  repos: PropTypes.number,
-  followers: PropTypes.number,
-  following: PropTypes.number,
+  repos: PropTypes.number.isRequired,
+  followers: PropTypes.number.isRequired,
+  following: PropTypes.number.isRequired,
 };
 
 Info.propTypes = {
-  text: PropTypes.string,
-  type: PropTypes.oneOf(["text", "link"]),
-  icon: PropTypes.node,
+  text: nullableStringProp,
+  type: PropTypes.oneOf(["text", "link"]).isRequired,
+  icon: PropTypes.node.isRequired,
 };
 
 UserInformation.propTypes = {
-  location: PropTypes.string,
-  blog: PropTypes.string,
-  company: PropTypes.string,
+  location: nullableStringProp,
+  blog: nullableStringProp,
+  company: nullableStringProp,
 };
 
 Display.propTypes = {
-  data: PropTypes.shape({
-    html_url: PropTypes.string,
-    avatar_url: PropTypes.string,
-    name: PropTypes.string,
-    login: PropTypes.string,
-    created_at: PropTypes.string,
-    bio: PropTypes.string,
-    public_repos: PropTypes.number,
-    followers: PropTypes.number,
-    following: PropTypes.number,
-    location: PropTypes.string,
-    twitter_username: PropTypes.string,
-    blog: PropTypes.string,
-    company: PropTypes.string,
-  }),
+  data: githubUserShape.isRequired,
 };
 
 const DisplayResults = styled.section`
   background-color: ${({ theme }) => theme.resultsBackground};
-  margin-top: clamp(0.8rem, 1.2vh, 1.4rem);
+  margin-top: clamp(1.2rem, 1.8vh, 2rem);
   padding: clamp(1.2rem, 1.8vh, 1.8rem) clamp(1.2rem, 1.8vw, 1.7rem);
   border-radius: ${({ theme }) => theme.radius.lg};
+  box-shadow: ${({ theme }) => theme.elevation.cardShadow};
 
   display: grid;
   grid-template-areas:
-    "userImage userName"
-    "UserBio UserBio"
-    "UserGitHubStats UserGitHubStats"
-    "UserInformation UserInformation";
+    "user-image user-name"
+    "user-bio user-bio"
+    "user-github-stats user-github-stats"
+    "user-information user-information";
   gap: ${({ theme }) => theme.spacing.sm};
   grid-template-columns: auto 1fr;
 
   @media ${device.laptop} {
     grid-template-areas:
-      "userImage userName"
-      "userImage UserBio"
-      "userImage UserGitHubStats"
-      "userImage UserInformation";
+      "user-image user-name"
+      "user-image user-bio"
+      "user-image user-github-stats"
+      "user-image user-information";
 
     grid-template-columns: 1fr 3fr;
   }
@@ -155,7 +140,7 @@ const DisplayResults = styled.section`
 
 const UserImage = styled.div`
   width: clamp(7rem, 10vw, 10rem);
-  grid-area: userImage;
+  grid-area: user-image;
 
   img {
     border-radius: ${({ theme }) => theme.radius.full};
@@ -167,8 +152,8 @@ const UserImage = styled.div`
 `;
 
 const UserName = styled.div`
-  grid-area: userName;
-  margin-left: 1.5rem;
+  grid-area: user-name;
+  margin-left: 1.8rem;
 
   @media ${device.laptop} {
     margin-left: 0;
@@ -177,11 +162,15 @@ const UserName = styled.div`
   h2 {
     color: ${({ theme }) => theme.userName};
     grid-area: name;
+    font-size: clamp(2rem, 2.3vw, 2.8rem);
+    line-height: 1.15;
   }
 
   a {
     color: ${({ theme }) => theme.searchName};
     grid-area: username;
+    font-size: 1.4rem;
+    font-weight: 600;
   }
 
   p {
@@ -207,14 +196,15 @@ const UserName = styled.div`
 `;
 
 const UserBio = styled.p`
-  grid-area: UserBio;
+  grid-area: user-bio;
   line-height: 1.6;
-  margin-top: ${({ theme }) => theme.spacing.sm};
+  margin-top: 1rem;
   color: ${({ theme }) => theme.userBio};
+  font-size: 1.55rem;
 `;
 
 const UserStats = styled.div`
-  grid-area: UserGitHubStats;
+  grid-area: user-github-stats;
   background-color: ${({ theme }) => theme.userStats.background};
   text-align: center;
   display: flex;
@@ -222,7 +212,7 @@ const UserStats = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.radius.sm};
   padding: 1.2em 1.6em;
-  margin-top: ${({ theme }) => theme.spacing.sm};
+  margin-top: 1.2rem;
 
   @media ${device.tablet} {
     text-align: left;
@@ -247,14 +237,15 @@ const UserStats = styled.div`
 `;
 
 const UserInfo = styled.div`
-  grid-area: UserInformation;
-  margin-top: ${({ theme }) => theme.spacing.sm};
+  grid-area: user-information;
+  margin-top: 1.2rem;
 
   div {
-    display: flex;
+    display: grid;
+    gap: ${({ theme }) => theme.spacing.sm};
 
-    & > *:first-child {
-      margin-right: 30%;
+    @media ${device.tablet} {
+      grid-template-columns: 1fr 1fr;
     }
   }
 
@@ -269,10 +260,6 @@ const UserInfo = styled.div`
   span {
     width: 2.5rem;
     text-align: center;
-
-    svg path {
-      fill: ${({ theme }) => theme.userSocial.color};
-    }
   }
 
   a {
@@ -286,5 +273,5 @@ const UserInfo = styled.div`
 `;
 
 const Information = styled.p`
-  opacity: ${({ fade }) => fade};
+  opacity: ${({ $fade }) => $fade};
 `;

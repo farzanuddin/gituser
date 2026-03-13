@@ -1,145 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Octokit } from "octokit";
 import PropTypes from "prop-types";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Container } from "../styles/Container.styled";
 import { Display } from "./Display";
-
+import { useGithubUserSearch } from "../hooks/useGithubUserSearch";
+import { shake } from "../styles/utils/animations";
 import { SearchIcon, SpinningLoader } from "../icons";
 
-const DEFAULT_USER = "farzanuddin";
-const ERROR_MESSAGES = {
-  emptySearch: "Please enter a username",
-  userNotFound: "User not found",
-  rateLimit: "Rate limit reached. Please try again later.",
-  network: "Network error. Check your connection and try again.",
-  generic: "Something went wrong. Please try again.",
-};
-
-const getErrorMessage = (errorObj) => {
-  if (errorObj?.status === 404) {
-    return ERROR_MESSAGES.userNotFound;
-  }
-
-  if (errorObj?.status === 403) {
-    return ERROR_MESSAGES.rateLimit;
-  }
-
-  if (errorObj?.name === "TypeError") {
-    return ERROR_MESSAGES.network;
-  }
-
-  return ERROR_MESSAGES.generic;
-};
-
-const getGithubUserInformation = async (userName) => {
-  const octo = new Octokit({
-    auth: import.meta.env.VITE_GITHUB_TOKEN,
-  });
-
-  const response = await octo.request("GET /users/{username}", {
-    username: userName,
-  });
-
-  return response.data;
-};
-
 export const Search = ({ onStatusChange }) => {
-  const [search, setSearch] = useState("");
-  const [error, setError] = useState("");
-  const [data, setData] = useState(null);
-  const [shake, setShake] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isCachedResult, setIsCachedResult] = useState(false);
-  const searchInputRef = useRef(null);
-  const userCache = useRef(new Map());
-  const activeRequestId = useRef(0);
-
-  const triggerShake = useCallback(() => {
-    setShake(true);
-    setTimeout(() => {
-      setShake(false);
-    }, 500);
-  }, []);
-
-  const searchUser = useCallback(async (username) => {
-    const normalizedUsername = username.trim();
-    const cacheKey = normalizedUsername.toLowerCase();
-
-    if (!normalizedUsername) {
-      setError(ERROR_MESSAGES.emptySearch);
-      triggerShake();
-      return;
-    }
-
-    if (userCache.current.has(cacheKey)) {
-      setError("");
-      setIsCachedResult(true);
-      setData(userCache.current.get(cacheKey));
-      return;
-    }
-
-    const requestId = activeRequestId.current + 1;
-    activeRequestId.current = requestId;
-    setLoading(true);
-    setError("");
-
-    try {
-      const results = await getGithubUserInformation(normalizedUsername);
-
-      if (requestId !== activeRequestId.current) {
-        return;
-      }
-
-      userCache.current.set(cacheKey, results);
-      setIsCachedResult(false);
-      setData(results);
-    } catch (errorObj) {
-      if (requestId !== activeRequestId.current) {
-        return;
-      }
-
-      setIsCachedResult(false);
-      setError(getErrorMessage(errorObj));
-      triggerShake();
-    } finally {
-      if (requestId === activeRequestId.current) {
-        setLoading(false);
-      }
-    }
-  }, [triggerShake]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    searchUser(search);
-  };
-
-  const handleChange = (e) => {
-    setSearch(e.target.value);
-  };
-
-  const handleSearchBarClick = (e) => {
-    const clickedButton = e.target.closest("button");
-
-    if (clickedButton) {
-      return;
-    }
-
-    searchInputRef.current?.focus();
-  };
-
-  useEffect(() => {
-    searchUser(DEFAULT_USER);
-  }, [searchUser]);
-
-  useEffect(() => {
-    onStatusChange?.({
-      showCache: isCachedResult,
-      showWarning: Boolean(error),
-      warningText: error,
-    });
-  }, [error, isCachedResult, onStatusChange]);
+  const {
+    data,
+    error,
+    handleChange,
+    handleSearchBarClick,
+    handleSubmit,
+    loading,
+    searchInputRef,
+    shake,
+  } = useGithubUserSearch({ onStatusChange });
 
   return (
     <SearchSection>
@@ -157,7 +35,9 @@ export const Search = ({ onStatusChange }) => {
             />
           </SearchInput>
           <SearchOptions>
-            <ScreenReaderStatus aria-live="polite">{loading ? "Searching user..." : error}</ScreenReaderStatus>
+            <ScreenReaderStatus aria-live="polite">
+              {loading ? "Searching user..." : error}
+            </ScreenReaderStatus>
             {loading && <SpinningLoader />}
             <SubmitButton $shake={shake} disabled={loading} aria-busy={loading}>
               {loading ? "Searching..." : "Search"}
@@ -187,10 +67,20 @@ const SearchBar = styled.form`
   display: flex;
   cursor: text;
   justify-content: flex-start;
-  margin-top: clamp(0.6rem, 1vh, 1.2rem);
+  margin-top: 0;
   min-height: clamp(5.2rem, 7vh, 6rem);
   padding: 0 0 0 ${({ theme }) => theme.spacing.xxs};
   width: 100%;
+  box-shadow: ${({ theme }) => theme.elevation.softShadow};
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:focus-within {
+    box-shadow: ${({ theme }) => theme.elevation.cardShadow};
+    transform: translateY(-1px);
+  }
 
   button {
     cursor: pointer;
@@ -216,7 +106,7 @@ const SearchInput = styled.label`
 
   input {
     font-size: 1.3rem;
-    width: 25ch;
+    width: min(25ch, 100%);
     border: none;
     background-color: ${({ theme }) => theme.searchBar};
     outline: none;
@@ -240,6 +130,10 @@ const SearchOptions = styled.div`
   gap: ${({ theme }) => theme.spacing.lg};
   margin-left: auto;
   padding-right: ${({ theme }) => theme.spacing.xxs};
+
+  @media (max-width: 520px) {
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
 `;
 
 const SubmitButton = styled.button`
@@ -254,28 +148,24 @@ const SubmitButton = styled.button`
   min-height: 4rem;
   padding: 0.8em 1.25em;
 
-  @keyframes shake {
-    0% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-5px);
-    }
-    50% {
-      transform: translateX(5px);
-    }
-    75% {
-      transform: translateX(-5px);
-    }
-    100% {
-      transform: translateX(0);
-    }
-  }
-
-  animation: ${({ $shake }) => ($shake ? "shake 0.5s" : "none")};
+  animation: ${({ $shake }) =>
+    $shake
+      ? css`
+          ${shake} 0.5s
+        `
+      : "none"};
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
-    opacity: 0.6;
+    opacity: 1;
+    background-color: ${({ theme }) => theme.primaryButton.hoverBackground};
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   &:disabled {

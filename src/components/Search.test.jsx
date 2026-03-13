@@ -1,19 +1,23 @@
 import { ThemeProvider } from "styled-components";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Search } from "./Search";
 import { lightTheme } from "../styles/utils/theme";
 
-const mockRequest = vi.fn();
+const mockFetch = vi.fn();
 
-vi.mock("octokit", () => {
-  return {
-    Octokit: vi.fn().mockImplementation(() => ({
-      request: mockRequest,
-    })),
-  };
+const createJsonResponse = (data, status = 200) => ({
+  ok: status >= 200 && status < 300,
+  status,
+  json: vi.fn().mockResolvedValue(data),
+});
+
+const createErrorResponse = (status) => ({
+  ok: false,
+  status,
+  json: vi.fn().mockResolvedValue({}),
 });
 
 const renderSearch = () => {
@@ -41,21 +45,28 @@ const octocatData = {
   company: "GitHub",
 };
 
+const farzanData = {
+  ...octocatData,
+  login: "second-user",
+  html_url: "https://github.com/second-user",
+  name: "Second User",
+};
+
 describe("Search", () => {
   beforeEach(() => {
-    mockRequest.mockReset();
+    mockFetch.mockReset();
+    vi.stubGlobal("fetch", mockFetch);
   });
 
   afterEach(() => {
     cleanup();
+    vi.unstubAllGlobals();
   });
 
   it("loads default user and shows a not found error when a searched user does not exist", async () => {
-    mockRequest
-      .mockResolvedValueOnce({
-        data: octocatData,
-      })
-      .mockRejectedValueOnce({ status: 404 });
+    mockFetch
+      .mockResolvedValueOnce(createJsonResponse(octocatData))
+      .mockResolvedValueOnce(createErrorResponse(404));
 
     renderSearch();
 
@@ -76,17 +87,19 @@ describe("Search", () => {
   });
 
   it("shows rate-limit message when GitHub API returns 403", async () => {
-    mockRequest.mockRejectedValueOnce({ status: 403 });
+    mockFetch.mockResolvedValueOnce(createErrorResponse(403));
 
     renderSearch();
 
     await waitFor(() => {
-      expect(screen.getAllByText("Rate limit reached. Please try again later.").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByText("Rate limit reached. Please try again later.").length
+      ).toBeGreaterThan(0);
     });
   });
 
   it("shows cached-result badge when a user is searched more than once", async () => {
-    mockRequest.mockResolvedValue({ data: octocatData });
+    mockFetch.mockResolvedValue(createJsonResponse(octocatData));
 
     const onStatusChange = vi.fn();
 
@@ -115,6 +128,59 @@ describe("Search", () => {
       );
     });
 
-    expect(mockRequest).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps only the latest search result when requests resolve out of order", async () => {
+    const createDeferred = () => {
+      let resolve;
+      const promise = new Promise((res) => {
+        resolve = res;
+      });
+
+      return { promise, resolve };
+    };
+
+    const firstRequest = createDeferred();
+    const secondRequest = createDeferred();
+
+    mockFetch
+      .mockResolvedValueOnce(createJsonResponse(octocatData))
+      .mockImplementationOnce(() => firstRequest.promise)
+      .mockImplementationOnce(() => secondRequest.promise);
+
+    renderSearch();
+
+    await waitFor(() => {
+      expect(screen.getByText("@octocat")).toBeInTheDocument();
+    });
+
+    const input = screen.getByLabelText("Search GitHub username");
+    const button = screen.getByRole("button", { name: /search/i });
+    const form = input.closest("form");
+
+    expect(form).not.toBeNull();
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "first-user");
+    await userEvent.click(button);
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "second-user");
+    fireEvent.submit(form);
+
+    secondRequest.resolve(createJsonResponse(farzanData));
+
+    await waitFor(() => {
+      expect(screen.getByText("@second-user")).toBeInTheDocument();
+    });
+
+    firstRequest.resolve(
+      createJsonResponse({ ...octocatData, login: "first-user", name: "First User" })
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText("@first-user")).not.toBeInTheDocument();
+    });
   });
 });

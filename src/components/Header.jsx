@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import PropTypes from "prop-types";
-
 import { Container } from "../styles/Container.styled";
-
+import { badgeReveal, pulse } from "../styles/utils/animations";
+import { headerStatusShape } from "../utils/headerStatus";
 import { MoonIcon, SunIcon } from "../icons";
 
 export const Header = ({ toggleTheme, theme, status }) => {
@@ -13,7 +13,10 @@ export const Header = ({ toggleTheme, theme, status }) => {
           {status?.showCache && <StatusBadge>Loaded from cache</StatusBadge>}
           {status?.showWarning && <WarningStatusBadge>{status.warningText}</WarningStatusBadge>}
         </StatusSlot>
-        <Toggle onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
+        <Toggle
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        >
           {theme === "light" ? <MoonIcon /> : <SunIcon />}
         </Toggle>
       </StyledHeader>
@@ -22,13 +25,9 @@ export const Header = ({ toggleTheme, theme, status }) => {
 };
 
 Header.propTypes = {
-  toggleTheme: PropTypes.func,
-  theme: PropTypes.string,
-  status: PropTypes.shape({
-    showCache: PropTypes.bool,
-    showWarning: PropTypes.bool,
-    warningText: PropTypes.string,
-  }),
+  toggleTheme: PropTypes.func.isRequired,
+  theme: PropTypes.oneOf(["light", "dark"]).isRequired,
+  status: headerStatusShape.isRequired,
 };
 
 const StyledHeader = styled.header`
@@ -39,54 +38,54 @@ const StyledHeader = styled.header`
 `;
 
 const StatusSlot = styled.div`
-  min-height: 3.2rem;
+  min-height: 2.8rem;
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
   flex-wrap: wrap;
 `;
 
-const StatusBadge = styled.p`
+const statusBadgeBase = css`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
   padding: ${({ theme }) => `${theme.spacing.xxs} ${theme.spacing.sm}`};
   border-radius: ${({ theme }) => theme.radius.lg};
   background-color: ${({ theme }) => theme.searchBar};
-  color: ${({ theme }) => theme.searchName};
-  border: 1px solid transparent;
+  box-shadow: ${({ theme }) => theme.elevation.softShadow};
   font-size: 1.2rem;
   font-weight: 700;
+  animation: ${badgeReveal} 0.22s ease;
+`;
+
+const statusBadgeDot = css`
+  content: "";
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: ${({ theme }) => theme.radius.full};
+  animation: ${pulse} 1.8s ease-in-out infinite;
+`;
+
+const StatusBadge = styled.p`
+  ${statusBadgeBase}
+  color: ${({ theme }) => theme.searchName};
+  border: 1px solid rgba(111, 144, 189, 0.22);
 
   &::before {
-    content: "";
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: ${({ theme }) => theme.radius.full};
+    ${statusBadgeDot}
     background-color: ${({ theme }) => theme.searchName};
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(0.8);
-      opacity: 0.6;
-    }
-    50% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(0.8);
-      opacity: 0.6;
-    }
   }
 `;
 
-const WarningStatusBadge = styled(StatusBadge)`
+const WarningStatusBadge = styled.p`
+  ${statusBadgeBase}
   color: ${({ theme }) => theme.errorText};
+  border-color: rgba(209, 67, 67, 0.34);
+  border-style: solid;
+  border-width: 1px;
 
   &::before {
+    ${statusBadgeDot}
     background-color: ${({ theme }) => theme.errorText};
   }
 `;
@@ -100,8 +99,12 @@ const Toggle = styled.button`
   gap: ${({ theme }) => theme.spacing.sm};
   font-weight: 700;
   margin-right: 10px;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     color: ${({ theme }) => theme.toggleButton.hoverColor};
+    transform: translateY(-1px);
   }
 `;

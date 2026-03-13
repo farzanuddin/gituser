@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ThemeProvider } from "styled-components";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./styles/Global.styled";
 import { Header } from "./components/Header";
 import { Search } from "./components/Search";
 import { darkTheme, lightTheme } from "./styles/utils/theme";
+import { createHeaderStatus } from "./utils/headerStatus";
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -14,13 +14,9 @@ function App() {
       return savedTheme;
     }
 
-    return "light";
+    return "dark";
   });
-  const [headerStatus, setHeaderStatus] = useState({
-    showCache: false,
-    showWarning: false,
-    warningText: "",
-  });
+  const [headerStatus, setHeaderStatus] = useState(() => createHeaderStatus());
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -42,11 +38,11 @@ function App() {
 }
 
 const AppShell = styled.div`
-  height: 100dvh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(0.6rem, 1vh, 1.2rem);
+  gap: clamp(1.2rem, 2.2vh, 2.4rem);
 `;
 
 export default App;

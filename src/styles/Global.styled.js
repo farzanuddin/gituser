@@ -23,7 +23,8 @@ export const GlobalStyles = styled.createGlobalStyle`
     height: 100dvh;
     padding: clamp(1.2rem, 1.8vh, 2.2rem) 0;
     background-color: ${({ theme }) => theme.background};
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   #root {
