@@ -4,6 +4,8 @@ A GitHub profile search app. Enter any GitHub username and instantly view their 
 
 [https://farzanuddin.github.io/gituser](https://farzanuddin.github.io/gituser/)
 
+![Gituser preview](./public/preview.png)
+
 ## Objective
 
 Coming from a background where CRA was the go-to for spinning up React projects, Vite was pretty new
@@ -26,7 +28,6 @@ directly through GitHub.
 | [React](https://react.dev/)                         | 18.2.0  | UI framework                       |
 | [Vite](https://vitejs.dev/)                         | 4.4.5   | Build tool and dev server          |
 | [Styled Components](https://styled-components.com/) | 6.0.6   | Component-scoped CSS-in-JS styling |
-| [Dayjs](https://day.js.org/)                        | 1.11.9  | Date formatting                    |
 | [PropTypes](https://github.com/facebook/prop-types) | 15.8.1  | Runtime prop type checking         |
 | [ESLint](https://eslint.org/)                       | 8.45.0  | Code linting                       |
 
