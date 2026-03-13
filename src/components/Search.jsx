@@ -9,11 +9,14 @@ import { device } from "../styles/utils/theme";
 import { SpinningLoader } from "./icons/SpinningIcon";
 import searchIcon from "../assets/icon-search.svg";
 
-const getGithubUserInformation = async (userName) => {
-  const octo = new Octokit();
+const DEFAULT_USER = "farzanuddin";
 
-  let response;
-  response = await octo.request("GET /users/{username}", {
+const getGithubUserInformation = async (userName) => {
+  const octo = new Octokit({
+    auth: import.meta.env.VITE_GITHUB_TOKEN,
+  });
+
+  const response = await octo.request("GET /users/{username}", {
     username: userName,
   });
 
@@ -23,7 +26,7 @@ const getGithubUserInformation = async (userName) => {
 export const Search = () => {
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState("");
+  const [data, setData] = useState(null);
   const [shake, setShake] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -38,8 +41,9 @@ export const Search = () => {
     setLoading(true);
     try {
       const results = await getGithubUserInformation(username);
-      setData(Object.assign({}, results));
+      setData(results);
     } catch (e) {
+      setError("No results found.");
       triggerShake();
     } finally {
       setLoading(false);
@@ -62,12 +66,8 @@ export const Search = () => {
     setSearch(e.target.value);
   };
 
-  const handleBlur = (e) => {
-    setSearch(e.target.value);
-  };
-
   useEffect(() => {
-    searchUser("farzanuddin");
+    searchUser(DEFAULT_USER);
   }, []);
 
   return (
@@ -79,9 +79,8 @@ export const Search = () => {
             <input
               id="userSearch"
               type="text"
-              placeholder="Search github repo..."
+              placeholder="Search GitHub user..."
               onChange={handleChange}
-              onBlur={handleBlur}
             />
           </SearchInput>
           <SearchOptions>

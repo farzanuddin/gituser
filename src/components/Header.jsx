@@ -10,7 +10,7 @@ export const Header = ({ toggleTheme, theme }) => {
   return (
     <Container>
       <StyledHeader>
-        <h1>GitUser</h1>
+        <h1>gituser</h1>
         <Toggle onClick={toggleTheme}>
           {theme === "light" ? <MoonIcon /> : <SunIcon />}
         </Toggle>

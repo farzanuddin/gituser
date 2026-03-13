@@ -29,7 +29,7 @@ const UserGithubStats = ({ repos, followers, following }) => {
 
 const Info = ({ text, type, icon }) => {
   const getText = () => {
-    if (!text) return "Not Availible";
+    if (!text) return "Not Available";
     else if (type === "link")
       return (
         <a target="__blank" href={text}>
@@ -149,8 +149,8 @@ const DisplayResults = styled.section`
     grid-template-areas:
       "userImage userName"
       "userImage UserBio"
-      "UserImage UserGitHubStats"
-      "UserImage UserInformation";
+      "userImage UserGitHubStats"
+      "userImage UserInformation";
 
     grid-template-columns: 1fr 3fr;
   }
