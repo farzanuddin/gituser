@@ -4,8 +4,19 @@ export const device = {
 };
 
 const theme = {
+  spacing: {
+    xxs: "0.5rem",
+    xs: "0.7rem",
+    sm: "0.8rem",
+    lg: "1.5rem",
+  },
+  radius: {
+    sm: "15px",
+    lg: "15px",
+    full: "50%",
+  },
   background: {
-    light: "#F6F8FF",
+    light: "#bbbcbe",
     dark: "#141d2f",
   },
   color: {
@@ -98,6 +109,8 @@ const generateTheme = (themeMode) => {
   const isLight = themeMode === "light";
 
   return {
+    spacing: theme.spacing,
+    radius: theme.radius,
     background: theme.background[themeMode],
     color: theme.color[themeMode],
     pageTitle: theme.color[themeMode],

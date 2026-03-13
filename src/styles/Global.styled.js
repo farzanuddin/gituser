@@ -1,10 +1,10 @@
 import * as styled from "styled-components";
-import { device } from "./utils/theme";
 
 export const GlobalStyles = styled.createGlobalStyle`
   html {
     font-size: 62.5%;
     box-sizing: border-box;
+    height: 100%;
   }
 
   *,
@@ -19,15 +19,15 @@ export const GlobalStyles = styled.createGlobalStyle`
   body {
     font-family: "Space Mono", monospace;
     font-size: 1.6rem;
-    min-height: 100vh;
-    padding: 4rem 0;
+    min-height: 100dvh;
+    height: 100dvh;
+    padding: clamp(1.2rem, 1.8vh, 2.2rem) 0;
     background-color: ${({ theme }) => theme.background};
+    overflow: hidden;
+  }
 
-    @media ${device.tablet} {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  #root {
+    height: 100%;
   }
 
   a,
@@ -54,6 +54,13 @@ export const GlobalStyles = styled.createGlobalStyle`
 
   input {
     font-family: inherit;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.searchName};
+    outline-offset: 3px;
   }
 
   p,

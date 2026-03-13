@@ -1,12 +1,9 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-
 import { device } from "../styles/utils/theme";
 
-import { LocationIcon } from "./icons/Location";
-import { LinkIcon } from "./icons/Link";
-import { CompanyIcon } from "./icons/Company";
+import { CompanyIcon, LinkIcon, LocationIcon } from "../icons";
 
 const StatBlock = ({ name, stat }) => {
   return (
@@ -32,17 +29,17 @@ const Info = ({ text, type, icon }) => {
     if (!text) return "Not Available";
     else if (type === "link")
       return (
-        <a target="__blank" href={text}>
+        <a target="_blank" rel="noopener noreferrer" href={text}>
           {text}
         </a>
       );
     else return text;
   };
 
-  const availible = text ? true : false;
+  const available = Boolean(text);
 
   return (
-    <Information fade={availible ? 1 : 0.5}>
+    <Information fade={available ? 1 : 0.5}>
       <span>{icon}</span>
       {getText()}
     </Information>
@@ -69,7 +66,7 @@ export const Display = ({ data }) => {
       </UserImage>
       <UserName>
         <h2>{data.name}</h2>
-        <a target="__blank" href={data.html_url}>
+        <a target="_blank" rel="noopener noreferrer" href={data.html_url}>
           @{data.login}
         </a>
         <p>Joined {dayjs(data.created_at).format("MMMM YYYY")}</p>
@@ -132,9 +129,9 @@ Display.propTypes = {
 
 const DisplayResults = styled.section`
   background-color: ${({ theme }) => theme.resultsBackground};
-  margin-top: 3rem;
-  padding: 2.2em 1.7em;
-  border-radius: 15px;
+  margin-top: clamp(0.8rem, 1.2vh, 1.4rem);
+  padding: clamp(1.2rem, 1.8vh, 1.8rem) clamp(1.2rem, 1.8vw, 1.7rem);
+  border-radius: ${({ theme }) => theme.radius.lg};
 
   display: grid;
   grid-template-areas:
@@ -142,7 +139,7 @@ const DisplayResults = styled.section`
     "UserBio UserBio"
     "UserGitHubStats UserGitHubStats"
     "UserInformation UserInformation";
-  gap: 1rem;
+  gap: ${({ theme }) => theme.spacing.sm};
   grid-template-columns: auto 1fr;
 
   @media ${device.laptop} {
@@ -157,11 +154,11 @@ const DisplayResults = styled.section`
 `;
 
 const UserImage = styled.div`
-  width: 12rem;
+  width: clamp(7rem, 10vw, 10rem);
   grid-area: userImage;
 
   img {
-    border-radius: 50%;
+    border-radius: ${({ theme }) => theme.radius.full};
   }
 
   @media ${device.laptop} {
@@ -176,6 +173,7 @@ const UserName = styled.div`
   @media ${device.laptop} {
     margin-left: 0;
   }
+
   h2 {
     color: ${({ theme }) => theme.userName};
     grid-area: name;
@@ -204,14 +202,14 @@ const UserName = styled.div`
       "name join-date"
       "username username";
 
-    gap: 1rem;
+    gap: ${({ theme }) => theme.spacing.sm};
   }
 `;
 
 const UserBio = styled.p`
   grid-area: UserBio;
-  line-height: 2;
-  margin-top: 1.5rem;
+  line-height: 1.6;
+  margin-top: ${({ theme }) => theme.spacing.sm};
   color: ${({ theme }) => theme.userBio};
 `;
 
@@ -221,10 +219,10 @@ const UserStats = styled.div`
   text-align: center;
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  border-radius: 10px;
-  padding: 1.5em 2.2em;
-  margin-top: 1.5rem;
+  gap: ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  padding: 1.2em 1.6em;
+  margin-top: ${({ theme }) => theme.spacing.sm};
 
   @media ${device.tablet} {
     text-align: left;
@@ -233,13 +231,13 @@ const UserStats = styled.div`
   h3 {
     font-size: 1.1rem;
     margin-bottom: 0.6em;
-    font-weight: normal;
+    font-weight: 400;
     color: ${({ theme }) => theme.userStats.statTitle};
   }
 
   p {
     font-size: 1.6rem;
-    font-weight: bold;
+    font-weight: 700;
     color: ${({ theme }) => theme.userStats.statNum};
 
     @media ${device.laptop} {
@@ -250,7 +248,7 @@ const UserStats = styled.div`
 
 const UserInfo = styled.div`
   grid-area: UserInformation;
-  margin-top: 1.5rem;
+  margin-top: ${({ theme }) => theme.spacing.sm};
 
   div {
     display: flex;
@@ -263,7 +261,7 @@ const UserInfo = styled.div`
   p {
     display: flex;
     gap: 1.2rem;
-    margin-top: 1.5rem;
+    margin-top: ${({ theme }) => theme.spacing.sm};
     align-items: center;
     color: ${({ theme }) => theme.userSocial.color};
   }

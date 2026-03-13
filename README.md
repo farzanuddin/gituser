@@ -21,7 +21,6 @@ Coming from a background where CRA was the go-to for spinning up React projects,
 |---|---|---|
 | [React](https://react.dev/) | 18.2.0 | UI framework |
 | [Vite](https://vitejs.dev/) | 4.4.5 | Build tool and dev server |
-| [Octokit](https://github.com/octokit/octokit.js) | 3.1.0 | GitHub API client |
 | [Styled Components](https://styled-components.com/) | 6.0.6 | Component-scoped CSS-in-JS styling |
 | [Dayjs](https://day.js.org/) | 1.11.9 | Date formatting |
 | [PropTypes](https://github.com/facebook/prop-types) | 15.8.1 | Runtime prop type checking |
