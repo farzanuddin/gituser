@@ -38,7 +38,7 @@ function App() {
 }
 
 const MainContent = styled.div`
-  min-height: 100dvh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;

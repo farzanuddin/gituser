@@ -4,7 +4,7 @@ A GitHub profile search app. Enter any GitHub username and instantly view their 
 
 [https://farzanuddin.github.io/gituser](https://farzanuddin.github.io/gituser/)
 
-![Gituser preview](./public/image.png)
+![preview](./public/preview.gif)
 
 ## Objective
 
