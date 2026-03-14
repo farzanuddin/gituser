@@ -1,10 +1,10 @@
 # Gituser
 
-A GitHub profile search app. Enter any GitHub username and instantly view their profile details.
+A GitHub profile search app built on Vite, React and Styled Components. Enter any GitHub username and instantly view their profile details.
 
 [https://farzanuddin.github.io/gituser](https://farzanuddin.github.io/gituser/)
 
-![preview](./public/preview.gif)
+![preview](./public/screen-recording.gif)
 
 ## Objective
 
