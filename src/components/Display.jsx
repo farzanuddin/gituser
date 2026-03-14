@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { device } from "../styles/utils/theme";
 import { CompanyIcon, LinkIcon, LocationIcon } from "../icons";
-import { githubUserShape, nullableStringProp } from "../utils/githubUser";
+import { githubRepoShape, githubUserShape, nullableStringProp } from "../utils/githubUser";
 
 const EMPTY_BIO_TEXT = "This Profile has no bio.";
 
@@ -58,6 +58,28 @@ const UserInformation = ({ location, blog, company }) => {
   );
 };
 
+const RecentRepos = ({ repos }) => {
+  if (!repos.length) {
+    return null;
+  }
+
+  return (
+    <RecentReposSection>
+      <h3>Recent Repositories</h3>
+      <ul>
+        {repos.map((repo) => (
+          <li key={repo.id}>
+            <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+              {repo.name}
+            </a>
+            <p>{dayjs(repo.pushed_at).format("DD MMM YYYY")}</p>
+          </li>
+        ))}
+      </ul>
+    </RecentReposSection>
+  );
+};
+
 export const Display = ({ data }) => {
   const bioText = data.bio || EMPTY_BIO_TEXT;
 
@@ -80,6 +102,7 @@ export const Display = ({ data }) => {
         following={data.following}
       />
       <UserInformation location={data.location} blog={data.blog} company={data.company} />
+      <RecentRepos repos={data.recent_repos} />
     </DisplayResults>
   );
 };
@@ -107,14 +130,18 @@ UserInformation.propTypes = {
   company: nullableStringProp,
 };
 
+RecentRepos.propTypes = {
+  repos: PropTypes.arrayOf(githubRepoShape).isRequired,
+};
+
 Display.propTypes = {
   data: githubUserShape.isRequired,
 };
 
 const DisplayResults = styled.section`
   background-color: ${({ theme }) => theme.resultsBackground};
-  margin-top: clamp(1.2rem, 1.8vh, 2rem);
-  padding: clamp(1.2rem, 1.8vh, 1.8rem) clamp(1.2rem, 1.8vw, 1.7rem);
+  margin: clamp(1.2rem, 1.8vh, 2rem) 0 clamp(1rem, 1.6vh, 1.8rem);
+  padding: clamp(1.8rem, 2.6vh, 2.2rem) clamp(2rem, 6vw, 2.8rem);
   border-radius: ${({ theme }) => theme.radius.lg};
   box-shadow: ${({ theme }) => theme.elevation.cardShadow};
 
@@ -123,18 +150,28 @@ const DisplayResults = styled.section`
     "user-image user-name"
     "user-bio user-bio"
     "user-github-stats user-github-stats"
-    "user-information user-information";
+    "user-information user-information"
+    "recent-repos recent-repos";
   gap: ${({ theme }) => theme.spacing.sm};
   grid-template-columns: auto 1fr;
+
+  @media (max-width: 520px) {
+    padding-top: 2rem;
+    padding-bottom: 2.4rem;
+    padding-left: 2.2rem;
+    padding-right: 2.2rem;
+  }
 
   @media ${device.laptop} {
     grid-template-areas:
       "user-image user-name"
       "user-image user-bio"
       "user-image user-github-stats"
-      "user-image user-information";
+      "user-image user-information"
+      "user-image recent-repos";
 
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 2rem;
   }
 `;
 
@@ -147,16 +184,27 @@ const UserImage = styled.div`
   }
 
   @media ${device.laptop} {
-    justify-self: center;
+    justify-self: start;
   }
 `;
 
 const UserName = styled.div`
   grid-area: user-name;
+  display: grid;
+  grid-template-areas:
+    "name"
+    "username"
+    "join-date";
+  gap: 0.3rem;
   margin-left: 1.8rem;
 
   @media ${device.laptop} {
     margin-left: 0;
+    grid-template-areas:
+      "name join-date"
+      "username username";
+
+    gap: ${({ theme }) => theme.spacing.sm};
   }
 
   h2 {
@@ -176,22 +224,14 @@ const UserName = styled.div`
   p {
     color: ${({ theme }) => theme.dateJoined};
     grid-area: join-date;
-    justify-self: end;
+    justify-self: start;
     align-self: center;
-    margin-top: 1.5rem;
+    margin-top: 0.2rem;
 
     @media ${device.laptop} {
+      justify-self: end;
       margin-top: 0;
     }
-  }
-
-  @media ${device.laptop} {
-    display: grid;
-    grid-template-areas:
-      "name join-date"
-      "username username";
-
-    gap: ${({ theme }) => theme.spacing.sm};
   }
 `;
 
@@ -239,10 +279,12 @@ const UserStats = styled.div`
 const UserInfo = styled.div`
   grid-area: user-information;
   margin-top: 1.2rem;
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.lg};
 
   div {
     display: grid;
-    gap: ${({ theme }) => theme.spacing.sm};
+    gap: ${({ theme }) => theme.spacing.lg};
 
     @media ${device.tablet} {
       grid-template-columns: 1fr 1fr;
@@ -252,7 +294,6 @@ const UserInfo = styled.div`
   p {
     display: flex;
     gap: 1.2rem;
-    margin-top: ${({ theme }) => theme.spacing.sm};
     align-items: center;
     color: ${({ theme }) => theme.userSocial.color};
   }
@@ -274,4 +315,51 @@ const UserInfo = styled.div`
 
 const Information = styled.p`
   opacity: ${({ $fade }) => $fade};
+`;
+
+const RecentReposSection = styled.section`
+  grid-area: recent-repos;
+  margin-top: 1.6rem;
+
+  h3 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: ${({ theme }) => theme.userStats.statTitle};
+    margin-bottom: 0.8rem;
+  }
+
+  ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.35rem;
+    background-color: ${({ theme }) => theme.userStats.background};
+    border-radius: ${({ theme }) => theme.radius.sm};
+    padding: 0.9rem 1.1rem;
+  }
+
+  a {
+    color: ${({ theme }) => theme.userSocial.link};
+    font-size: 1.6rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  p {
+    color: ${({ theme }) => theme.dateJoined};
+    font-size: 1.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;

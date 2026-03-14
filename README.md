@@ -17,9 +17,16 @@ directly through GitHub.
 ## Features
 
 - Search any GitHub user by username
+- Autocomplete username suggestions while typing in the search bar
 - Displays avatar, name, bio, join date, and profile link
 - Shows public repo count, followers, and following
 - Shows location, company, and website if available
+
+### Autocomplete Limitation
+
+Username autocomplete uses the GitHub Search API and may stop working after a few unauthenticated
+requests due to rate limiting. To increase the limit, authenticate with a GitHub personal access
+token by following the existing `.env.example` setup steps in the Getting Started section.
 
 ## Tech Stack
 

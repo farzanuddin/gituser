@@ -3,20 +3,30 @@ import styled, { css } from "styled-components";
 
 import { Container } from "../styles/Container.styled";
 import { Display } from "./Display";
+import { FooterCredit } from "./FooterCredit";
 import { useGithubUserSearch } from "../hooks/useGithubUserSearch";
 import { shake } from "../styles/utils/animations";
 import { SearchIcon, SpinningLoader } from "../icons";
 
 export const Search = ({ onStatusChange }) => {
   const {
+    activeSuggestionIndex,
     data,
     error,
     handleChange,
+    handleInputBlur,
+    handleInputFocus,
+    handleInputKeyDown,
     handleSearchBarClick,
+    handleSuggestionSelect,
     handleSubmit,
+    isSuggesting,
     loading,
+    search,
     searchInputRef,
     shake,
+    showSuggestions,
+    suggestions,
   } = useGithubUserSearch({ onStatusChange });
 
   return (
@@ -29,9 +39,16 @@ export const Search = ({ onStatusChange }) => {
               ref={searchInputRef}
               id="userSearch"
               type="text"
+              value={search}
               placeholder="Search GitHub user..."
               onChange={handleChange}
+              onKeyDown={handleInputKeyDown}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               aria-label="Search GitHub username"
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-controls="user-search-suggestions"
             />
           </SearchInput>
           <SearchOptions>
@@ -43,8 +60,32 @@ export const Search = ({ onStatusChange }) => {
               {loading ? "Searching..." : "Search"}
             </SubmitButton>
           </SearchOptions>
+          {(showSuggestions || isSuggesting) && (
+            <SuggestionPanel id="user-search-suggestions" role="listbox">
+              {isSuggesting && !suggestions.length && <SuggestionHint>Searching users...</SuggestionHint>}
+              {!isSuggesting && !suggestions.length && (
+                <SuggestionHint>No username suggestions yet</SuggestionHint>
+              )}
+              {suggestions.map((suggestion, index) => (
+                <SuggestionItem key={suggestion.id}>
+                  <SuggestionButton
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                    $active={index === activeSuggestionIndex}
+                    role="option"
+                    aria-selected={index === activeSuggestionIndex}
+                  >
+                    <SuggestionAvatar src={suggestion.avatar_url} alt="" aria-hidden="true" />
+                    <SuggestionLogin>{suggestion.login}</SuggestionLogin>
+                  </SuggestionButton>
+                </SuggestionItem>
+              ))}
+            </SuggestionPanel>
+          )}
         </SearchBar>
         {data && <Display data={data}></Display>}
+        <FooterCredit />
       </Container>
     </SearchSection>
   );
@@ -61,6 +102,7 @@ const SearchSection = styled.main`
 `;
 
 const SearchBar = styled.form`
+  position: relative;
   align-items: center;
   background-color: ${({ theme }) => theme.searchBar};
   border-radius: ${({ theme }) => theme.radius.lg};
@@ -183,4 +225,58 @@ const ScreenReaderStatus = styled.p`
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+`;
+
+const SuggestionPanel = styled.ul`
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  left: 0;
+  right: 0;
+  z-index: 6;
+  display: grid;
+  gap: 0.2rem;
+  background-color: ${({ theme }) => theme.resultsBackground};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  box-shadow: ${({ theme }) => theme.elevation.cardShadow};
+  padding: 0.6rem;
+`;
+
+const SuggestionItem = styled.li`
+  list-style: none;
+`;
+
+const SuggestionButton = styled.button`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: 0.75rem 0.9rem;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  background-color: ${({ $active, theme }) => ($active ? theme.userStats.background : "transparent")};
+  color: ${({ theme }) => theme.userName};
+  text-align: left;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.userStats.background};
+  }
+`;
+
+const SuggestionAvatar = styled.img`
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: ${({ theme }) => theme.radius.full};
+  flex-shrink: 0;
+`;
+
+const SuggestionLogin = styled.span`
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.userName};
+`;
+
+const SuggestionHint = styled.p`
+  color: ${({ theme }) => theme.dateJoined};
+  font-size: 1.25rem;
+  padding: 0.6rem 0.9rem;
 `;

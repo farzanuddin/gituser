@@ -52,6 +52,25 @@ const farzanData = {
   name: "Second User",
 };
 
+const reposData = [
+  {
+    id: 1,
+    name: "alpha",
+    html_url: "https://github.com/octocat/alpha",
+    pushed_at: "2024-03-01T00:00:00Z",
+    stargazers_count: 5,
+    fork: false,
+  },
+  {
+    id: 2,
+    name: "beta",
+    html_url: "https://github.com/octocat/beta",
+    pushed_at: "2024-02-01T00:00:00Z",
+    stargazers_count: 2,
+    fork: false,
+  },
+];
+
 describe("Search", () => {
   beforeEach(() => {
     mockFetch.mockReset();
@@ -66,6 +85,7 @@ describe("Search", () => {
   it("loads default user and shows a not found error when a searched user does not exist", async () => {
     mockFetch
       .mockResolvedValueOnce(createJsonResponse(octocatData))
+      .mockResolvedValueOnce(createJsonResponse(reposData))
       .mockResolvedValueOnce(createErrorResponse(404));
 
     renderSearch();
@@ -99,7 +119,15 @@ describe("Search", () => {
   });
 
   it("shows cached-result badge when a user is searched more than once", async () => {
-    mockFetch.mockResolvedValue(createJsonResponse(octocatData));
+    mockFetch.mockImplementation((url) => {
+      const requestUrl = String(url);
+
+      if (requestUrl.includes("/repos?")) {
+        return Promise.resolve(createJsonResponse(reposData));
+      }
+
+      return Promise.resolve(createJsonResponse(octocatData));
+    });
 
     const onStatusChange = vi.fn();
 
@@ -128,7 +156,7 @@ describe("Search", () => {
       );
     });
 
-    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
   it("keeps only the latest search result when requests resolve out of order", async () => {
@@ -144,10 +172,23 @@ describe("Search", () => {
     const firstRequest = createDeferred();
     const secondRequest = createDeferred();
 
-    mockFetch
-      .mockResolvedValueOnce(createJsonResponse(octocatData))
-      .mockImplementationOnce(() => firstRequest.promise)
-      .mockImplementationOnce(() => secondRequest.promise);
+    mockFetch.mockImplementation((url) => {
+      const requestUrl = String(url);
+
+      if (requestUrl.includes("/repos?")) {
+        return Promise.resolve(createJsonResponse(reposData));
+      }
+
+      if (requestUrl.includes("/users/first-user")) {
+        return firstRequest.promise;
+      }
+
+      if (requestUrl.includes("/users/second-user")) {
+        return secondRequest.promise;
+      }
+
+      return Promise.resolve(createJsonResponse(octocatData));
+    });
 
     renderSearch();
 

@@ -2,6 +2,14 @@ import PropTypes from "prop-types";
 
 export const nullableStringProp = PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]);
 
+export const githubRepoShape = PropTypes.exact({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  html_url: PropTypes.string.isRequired,
+  pushed_at: PropTypes.string.isRequired,
+  stargazers_count: PropTypes.number.isRequired,
+});
+
 export const githubUserShape = PropTypes.exact({
   html_url: PropTypes.string.isRequired,
   avatar_url: PropTypes.string.isRequired,
@@ -15,6 +23,7 @@ export const githubUserShape = PropTypes.exact({
   location: nullableStringProp,
   blog: nullableStringProp,
   company: nullableStringProp,
+  recent_repos: PropTypes.arrayOf(githubRepoShape).isRequired,
 });
 
 export const pickDisplayUserFields = ({
@@ -30,6 +39,7 @@ export const pickDisplayUserFields = ({
   location,
   blog,
   company,
+  recent_repos = [],
 }) => ({
   html_url,
   avatar_url,
@@ -43,4 +53,5 @@ export const pickDisplayUserFields = ({
   location,
   blog,
   company,
+  recent_repos,
 });

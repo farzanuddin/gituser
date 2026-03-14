@@ -9,4 +9,8 @@ export const Container = styled.div`
   @media ${device.tablet} {
     width: 73rem;
   }
+
+  @media ${device.laptop} {
+    width: 66rem;
+  }
 `;

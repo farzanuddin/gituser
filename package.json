@@ -1,7 +1,8 @@
 {
-  "name": "gituser",
+  "name": "Gituser",
   "private": true,
   "version": "0.0.2",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",

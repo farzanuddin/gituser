@@ -29,20 +29,20 @@ function App() {
   return (
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <GlobalStyles />
-      <AppShell>
+      <MainContent>
         <Header toggleTheme={toggleTheme} theme={theme} status={headerStatus} />
         <Search onStatusChange={setHeaderStatus} />
-      </AppShell>
+      </MainContent>
     </ThemeProvider>
   );
 }
 
-const AppShell = styled.div`
+const MainContent = styled.div`
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(1.2rem, 2.2vh, 2.4rem);
+  gap: clamp(0.6rem, 1.2vh, 1.2rem);
 `;
 
 export default App;

@@ -1,6 +1,11 @@
 import * as styled from "styled-components";
 
 export const GlobalStyles = styled.createGlobalStyle`
+  :root {
+    --font-body: "Manrope", sans-serif;
+    --font-display: "Space Grotesk", sans-serif;
+  }
+
   html {
     font-size: 62.5%;
     box-sizing: border-box;
@@ -17,12 +22,14 @@ export const GlobalStyles = styled.createGlobalStyle`
   }
 
   body {
-    font-family: "Space Mono", monospace;
+    font-family: var(--font-body);
+    font-feature-settings: "liga" 1, "kern" 1;
     font-size: 1.6rem;
     min-height: 100dvh;
     height: 100dvh;
     padding: clamp(1.2rem, 1.8vh, 2.2rem) 0;
     background-color: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.color};
     overflow-x: hidden;
     overflow-y: auto;
   }
@@ -39,6 +46,22 @@ export const GlobalStyles = styled.createGlobalStyle`
     font-family: inherit;
   }
 
+  button,
+  input,
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.03em;
+  }
+
   a:hover {
     text-decoration: underline;
   }
@@ -51,10 +74,6 @@ export const GlobalStyles = styled.createGlobalStyle`
   img {
     max-width: 100%;
     display: block;
-  }
-
-  input {
-    font-family: inherit;
   }
 
   button:focus-visible,

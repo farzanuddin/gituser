@@ -6,10 +6,12 @@ import { headerStatusShape } from "../utils/headerStatus";
 import { MoonIcon, SunIcon } from "../icons";
 
 export const Header = ({ toggleTheme, theme, status }) => {
+  const hasStatus = Boolean(status?.showCache || status?.showWarning);
+
   return (
     <Container>
       <StyledHeader>
-        <StatusSlot aria-live="polite">
+        <StatusSlot $hasStatus={hasStatus} aria-live="polite">
           {status?.showCache && <StatusBadge>Loaded from cache</StatusBadge>}
           {status?.showWarning && <WarningStatusBadge>{status.warningText}</WarningStatusBadge>}
         </StatusSlot>
@@ -39,10 +41,13 @@ const StyledHeader = styled.header`
 
 const StatusSlot = styled.div`
   min-height: 2.8rem;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  visibility: ${({ $hasStatus }) => ($hasStatus ? "visible" : "hidden")};
 `;
 
 const statusBadgeBase = css`
@@ -70,6 +75,7 @@ const StatusBadge = styled.p`
   ${statusBadgeBase}
   color: ${({ theme }) => theme.searchName};
   border: 1px solid rgba(111, 144, 189, 0.22);
+  white-space: nowrap;
 
   &::before {
     ${statusBadgeDot}
@@ -83,6 +89,9 @@ const WarningStatusBadge = styled.p`
   border-color: rgba(209, 67, 67, 0.34);
   border-style: solid;
   border-width: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &::before {
     ${statusBadgeDot}
