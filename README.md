@@ -4,7 +4,7 @@ A GitHub profile search app built on Vite, React and Styled Components. Enter an
 
 [https://farzanuddin.github.io/gituser](https://farzanuddin.github.io/gituser/)
 
-![preview](./public/screen-recording.gif)
+![preview](./.github/assets/screen-recording.gif)
 
 ## Objective
 
