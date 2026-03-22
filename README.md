@@ -22,28 +22,33 @@ directly through GitHub.
 - Public stats — shows public repository count, followers, and following
 - Contact fields — shows location, company, and website when available
 
-### Autocomplete Limitation
-
-Username autocomplete uses the GitHub Search API and may stop working after a few unauthenticated
-requests due to rate limiting. To increase the limit, authenticate with a GitHub personal access
-token by following the existing `.env.example` setup steps in the Getting Started section.
-
 ## Tech Stack
 
-| Tool                                                | Version | Purpose                            |
-| --------------------------------------------------- | ------- | ---------------------------------- |
-| [React](https://react.dev/)                         | 18.2.0  | UI framework                       |
-| [Vite](https://vitejs.dev/)                         | 4.4.5   | Build tool and dev server          |
-| [Styled Components](https://styled-components.com/) | 6.0.6   | Component-scoped CSS-in-JS styling |
-| [PropTypes](https://github.com/facebook/prop-types) | 15.8.1  | Runtime prop type checking         |
-| [ESLint](https://eslint.org/)                       | 8.45.0  | Code linting                       |
+| Technology | Version | Role |
+| ---------- | :-----: | ---- |
+| [React](https://react.dev/) | ^18.2.0 | UI framework |
+| [Vite](https://vitejs.dev/) | ^4.4.5 | Build tool & dev server |
+| [Styled Components](https://styled-components.com/) | ^6.0.6 | Component-scoped CSS-in-JS styling |
+| [PropTypes](https://github.com/facebook/prop-types) | ^15.8.1 | Runtime prop type checking |
+| [ESLint](https://eslint.org/) | ^8.45.0 | Code linting |
+| [dayjs](https://day.js.org/) | ^1.11.9 | Lightweight date formatting and parsing |
+| [Vitest](https://vitest.dev/) | ^2.1.8 | Test runner and coverage |
+| [Prettier](https://prettier.io/) | ^3.8.1 | Code formatter and style enforcement |
+| [jsdom](https://github.com/jsdom/jsdom) | ^24.1.3 | DOM environment for tests |
 
 ## Why This Approach
 
-Vite was chosen over Create React App for its significantly faster cold starts and hot module
-replacement. It also produces leaner builds with no unnecessary boilerplate. Deploying via GitHub
-Pages with `gh-pages` keeps hosting free and tightly integrated with the repo — no third-party
-platform needed.
+- Hook-based separation — Core search logic, network requests, caching, debouncing, and suggestion handling live in a custom hook (`src/hooks/useGithubUserSearch.js`). This keeps UI components focused on rendering while the hook owns side effects and state.
+
+- Explicit caching & request control — An in-memory LRU-style cache with TTL plus `AbortController` prevents unnecessary network calls, provides fast cached responses, and avoids race conditions during rapid input.
+
+- Debounced, optimistic autocomplete — Suggestions use a short debounce, separate AbortController, and their own cache to minimize API usage while keeping the UI responsive.
+
+- Small, compositional components — UI pieces (`Search`, `Display`, `Header`, `FooterCredit`) are single-responsibility and styled via `styled-components`, improving readability and testability.
+
+- Theming & persistence — App-level `ThemeProvider` with theme tokens and `localStorage` persistence enables consistent light/dark theming across components.
+
+- Predictable shapes & validation — `pickDisplayUserFields` and `PropTypes` normalize and validate data from the GitHub API, reducing rendering-time surprises.
 
 ## Getting Started
 
@@ -68,3 +73,9 @@ platform needed.
    ```bash
    npm run dev
    ```
+
+### Autocomplete Limitation
+
+Username autocomplete uses the GitHub Search API and may stop working after a few unauthenticated
+requests due to rate limiting. To increase the limit, authenticate with a GitHub personal access
+token by following the existing `.env.example` setup steps in the Getting Started section.
