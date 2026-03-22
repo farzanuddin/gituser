@@ -16,11 +16,11 @@ directly through GitHub.
 
 ## Features
 
-- Search any GitHub user by username
-- Autocomplete username suggestions while typing in the search bar
-- Displays avatar, name, bio, join date, and profile link
-- Shows public repo count, followers, and following
-- Shows location, company, and website if available
+- Search by username — look up any GitHub user and fetch their public profile data
+- Autocomplete suggestions — live username suggestions while typing in the search bar
+- Profile details — displays avatar, name, bio, join date, and direct profile link
+- Public stats — shows public repository count, followers, and following
+- Contact fields — shows location, company, and website when available
 
 ### Autocomplete Limitation
 
